@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen py-12 bg-gradient-to-br from-primary/5 to-secondary/5">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Certificate Preview -->
+        <div class="feature-card bg-white rounded-xl p-12 shadow-xl mb-8 relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 left-0 w-32 h-32 bg-primary/10 rounded-br-full"></div>
+            <div class="absolute bottom-0 right-0 w-32 h-32 bg-secondary/10 rounded-tl-full"></div>
+            
+            <!-- Certificate Content -->
+            <div class="relative text-center">
+                <!-- Logo -->
+                <img src="{% static 'images/logo.png' %}" alt="EduVerse Logo" class="h-16 mx-auto mb-8">
+                
+                <!-- Certificate Title -->
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Certificate of Completion</h1>
+                <p class="text-xl text-gray-600 mb-12">This is to certify that</p>
+                
+                <!-- Student Name -->
+                <h2 class="text-3xl font-bold text-primary mb-4">{{ student.get_full_name }}</h2>
+                
+                <!-- Course Details -->
+                <p class="text-xl text-gray-600 mb-8">has successfully completed the course</p>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">{{ course.title }}</h3>
+                
+                <!-- Completion Details -->
+                <div class="flex justify-center space-x-12 mb-12">
+                    <div>
+                        <p class="text-sm text-gray-500">Completed On</p>
+                        <p class="text-lg font-semibold text-gray-800">{{ completion_date|date:"F d, Y" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Course Duration</p>
+                        <p class="text-lg font-semibold text-gray-800">{{ course.duration }} Hours</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Certificate ID</p>
+                        <p class="text-lg font-semibold text-gray-800">{{ certificate_id }}</p>
+                    </div>
+                </div>
+                
+                <!-- Signatures -->
+                <div class="grid grid-cols-2 gap-8 mb-8">
+                    <div class="text-center">
+                        <img src="{{ instructor_signature }}" alt="Instructor Signature" class="h-16 mx-auto mb-2">
+                        <div class="w-48 mx-auto border-t border-gray-300 pt-2">
+                            <p class="font-semibold text-gray-800">{{ course.instructor.get_full_name }}</p>
+                            <p class="text-sm text-gray-500">Course Instructor</p>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <img src="{{ platform_signature }}" alt="Platform Signature" class="h-16 mx-auto mb-2">
+                        <div class="w-48 mx-auto border-t border-gray-300 pt-2">
+                            <p class="font-semibold text-gray-800">EduVerse Platform</p>
+                            <p class="text-sm text-gray-500">Authorized Signatory</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Verification -->
+                <div class="text-center text-sm text-gray-500">
+                    <p>This certificate can be verified at</p>
+                    <p class="font-semibold text-primary">https://eduverse.com/verify/{{ certificate_id }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex justify-center space-x-4">
+            <button onclick="window.print()" 
+                    class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center">
+                <i class="fas fa-print mr-2"></i>
+                Print Certificate
+            </button>
+            <a href="{% url 'courses:download_certificate' course.id %}" 
+               class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors flex items-center">
+                <i class="fas fa-download mr-2"></i>
+                Download PDF
+            </a>
+            <button onclick="shareCertificate()" 
+                    class="px-6 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors flex items-center">
+                <i class="fas fa-share-alt mr-2"></i>
+                Share
+            </button>
+        </div>
+        
+        <!-- Share Modal -->
+        <div id="shareModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
+            <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-6">Share Certificate</h3>
+                <div class="space-y-4">
+                    <!-- Social Media Buttons -->
+                    <button onclick="shareOnLinkedIn()" 
+                            class="w-full px-4 py-3 bg-[#0077b5] text-white rounded-lg hover:bg-[#0077b5]/90 transition-colors flex items-center justify-center">
+                        <i class="fab fa-linkedin mr-2"></i>
+                        Share on LinkedIn
+                    </button>
+                    <button onclick="shareOnTwitter()" 
+                            class="w-full px-4 py-3 bg-[#1da1f2] text-white rounded-lg hover:bg-[#1da1f2]/90 transition-colors flex items-center justify-center">
+                        <i class="fab fa-twitter mr-2"></i>
+                        Share on Twitter
+                    </button>
+                    
+                    <!-- Certificate Link -->
+                    <div class="flex items-center space-x-2">
+                        <input type="text" 
+                               value="https://eduverse.com/certificate/{{ certificate_id }}" 
+                               class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                               readonly>
+                        <button onclick="copyLink()" 
+                                class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Close Button -->
+                <button onclick="closeShareModal()" 
+                        class="mt-6 w-full px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Share Functionality -->
+<script>
+function shareCertificate() {
+    document.getElementById('shareModal').classList.remove('hidden');
+}
+
+function closeShareModal() {
+    document.getElementById('shareModal').classList.add('hidden');
+}
+
+function shareOnLinkedIn() {
+    const url = `https://eduverse.com/certificate/{{ certificate_id }}`;
+    const title = `I completed ${encodeURIComponent("{{ course.title }}")} on EduVerse!`;
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}`, '_blank');
+}
+
+function shareOnTwitter() {
+    const url = `https://eduverse.com/certificate/{{ certificate_id }}`;
+    const text = `I just completed ${encodeURIComponent("{{ course.title }}")} on @EduVerse! Check out my certificate:`;
+    window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+}
+
+function copyLink() {
+    const input = document.querySelector('input[readonly]');
+    input.select();
+    document.execCommand('copy');
+    alert('Link copied to clipboard!');
+}
+</script>
+{% endblock %}

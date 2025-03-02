@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Terms of Service - Eduverse{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50/50">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full filter blur-[120px] transform translate-x-1/3 -translate-y-1/3"></div>
+        <div class="absolute bottom-0 left-0 w-[800px] h-[800px] bg-secondary/5 rounded-full filter blur-[120px] transform -translate-x-1/3 translate-y-1/3"></div>
+    </div>
+
+    <div class="relative z-10 py-24">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-16">
+                <h1 class="text-4xl sm:text-5xl font-extrabold mb-6">
+                    <span class="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                        Terms of Service
+                    </span>
+                </h1>
+                <p class="text-lg text-gray-600">
+                    Last updated: January 7, 2025
+                </p>
+            </div>
+
+            <!-- Content -->
+            <div class="space-y-8">
+                <!-- Introduction -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="flex items-start space-x-4 mb-6">
+                        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-file-contract text-2xl text-primary"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">1. Acceptance of Terms</h2>
+                            <p class="text-gray-600">
+                                By accessing and using Eduverse, you agree to be bound by these Terms of Service. Please read them carefully before proceeding.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Accounts -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="flex items-start space-x-4 mb-6">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user-shield text-2xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">2. User Accounts</h2>
+                            <div class="space-y-4">
+                                <p class="text-gray-600">
+                                    You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.
+                                </p>
+                                <div class="bg-gray-50 p-4 rounded-xl">
+                                    <h3 class="font-semibold text-gray-900 mb-3">Account Requirements:</h3>
+                                    <ul class="grid gap-3 text-gray-600">
+                                        <li class="flex items-center space-x-3">
+                                            <i class="fas fa-check-circle text-primary"></i>
+                                            <span>Must be at least 13 years old</span>
+                                        </li>
+                                        <li class="flex items-center space-x-3">
+                                            <i class="fas fa-check-circle text-primary"></i>
+                                            <span>Provide accurate and complete information</span>
+                                        </li>
+                                        <li class="flex items-center space-x-3">
+                                            <i class="fas fa-check-circle text-primary"></i>
+                                            <span>Maintain account security</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content and Conduct -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="flex items-start space-x-4 mb-6">
+                        <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-users text-2xl text-accent"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Content and Conduct</h2>
+                            <div class="space-y-4">
+                                <p class="text-gray-600">
+                                    Users must respect intellectual property rights and maintain appropriate behavior within the platform.
+                                </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="bg-gray-50 p-4 rounded-xl">
+                                        <h4 class="font-semibold text-gray-900 mb-2">Prohibited Content</h4>
+                                        <ul class="space-y-2 text-gray-600 text-sm">
+                                            <li class="flex items-center space-x-2">
+                                                <i class="fas fa-times text-red-500"></i>
+                                                <span>Harmful or offensive material</span>
+                                            </li>
+                                            <li class="flex items-center space-x-2">
+                                                <i class="fas fa-times text-red-500"></i>
+                                                <span>Copyrighted content without permission</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-xl">
+                                        <h4 class="font-semibold text-gray-900 mb-2">Expected Behavior</h4>
+                                        <ul class="space-y-2 text-gray-600 text-sm">
+                                            <li class="flex items-center space-x-2">
+                                                <i class="fas fa-check text-green-500"></i>
+                                                <span>Respectful communication</span>
+                                            </li>
+                                            <li class="flex items-center space-x-2">
+                                                <i class="fas fa-check text-green-500"></i>
+                                                <span>Academic integrity</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Educational Services -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="flex items-start space-x-4 mb-6">
+                        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-graduation-cap text-2xl text-primary"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Educational Services</h2>
+                            <div class="space-y-4">
+                                <p class="text-gray-600">
+                                    We strive to provide high-quality educational content but make no guarantees about specific outcomes.
+                                </p>
+                                <div class="bg-gray-50 p-4 rounded-xl">
+                                    <h3 class="font-semibold text-gray-900 mb-3">Our Commitment:</h3>
+                                    <ul class="grid gap-3 text-gray-600">
+                                        <li class="flex items-center space-x-3">
+                                            <i class="fas fa-check-circle text-primary"></i>
+                                            <span>Regular content updates and improvements</span>
+                                        </li>
+                                        <li class="flex items-center space-x-3">
+                                            <i class="fas fa-check-circle text-primary"></i>
+                                            <span>Quality assurance and review process</span>
+                                        </li>
+                                        <li class="flex items-center space-x-3">
+                                            <i class="fas fa-check-circle text-primary"></i>
+                                            <span>Responsive support team</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Changes to Terms -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-sync-alt text-2xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Changes to Terms</h2>
+                            <p class="text-gray-600 mb-4">
+                                We reserve the right to modify these terms at any time. Continued use of the platform constitutes acceptance of updated terms.
+                            </p>
+                            <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-4">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-info-circle text-yellow-600"></i>
+                                    <p class="text-yellow-700 text-sm">
+                                        Users will be notified of significant changes to these terms via email or platform notifications.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="mt-12 text-center">
+                <p class="text-gray-600">
+                    If you have any questions about our Terms of Service, please 
+                    <a href="{% url 'core:contact' %}" class="text-primary hover:text-primary/80 font-medium">contact us</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

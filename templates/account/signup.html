@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign Up" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <!-- Logo -->
+        <img src="{% static 'images/Logo.png' %}" alt="Eduverse Logo" class="mx-auto h-16 w-auto">
+        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+            Start your learning journey
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            Already have an account?
+            <a href="{% url 'account_login' %}" class="font-medium text-primary hover:text-primary/80 transition-colors">
+                Sign in
+            </a>
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-xl">
+        <div class="bg-white py-8 px-4 shadow-xl shadow-gray-100/10 sm:rounded-2xl sm:px-10 border border-gray-100">
+            <!-- Social Signup -->
+            {% get_providers as socialaccount_providers %}
+            {% if socialaccount_providers %}
+            <div class="space-y-3">
+                <button class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 hover:-translate-y-0.5">
+                    <img src="{% static 'images/google.svg' %}" alt="Google" class="h-5 w-5 mr-2">
+                    Continue with Google
+                </button>
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or sign up with email</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Signup Form -->
+            <form class="space-y-6 mt-6" method="POST" action="{% url 'account_signup' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+
+                <!-- Error Messages -->
+                {% if form.errors %}
+                <div class="rounded-xl bg-red-50 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                There were errors with your submission
+                            </h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                    {% endfor %}
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Email Field -->
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Email address <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1">
+                        {{ form.email }}
+                    </div>
+                    {% if form.email.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Username Field -->
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Username <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1">
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Role Field -->
+                <div>
+                    <label for="{{ form.role.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        I am a... <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1">
+                        {{ form.role }}
+                    </div>
+                    {% if form.role.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.role.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Bio Field -->
+                <div>
+                    <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Bio
+                    </label>
+                    <div class="mt-1">
+                        {{ form.bio }}
+                    </div>
+                    {% if form.bio.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.bio.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Date of Birth Field -->
+                <div>
+                    <label for="{{ form.date_of_birth.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Date of Birth <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1">
+                        {{ form.date_of_birth }}
+                    </div>
+                    {% if form.date_of_birth.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.date_of_birth.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Profile Picture Field -->
+                <div>
+                    <label for="{{ form.avatar.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Profile Picture
+                    </label>
+                    <div class="mt-1">
+                        {{ form.avatar }}
+                    </div>
+                    {% if form.avatar.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.avatar.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- First Name Field -->
+                <div>
+                    <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        First Name
+                    </label>
+                    <div class="mt-1">
+                        {{ form.first_name }}
+                    </div>
+                    {% if form.first_name.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Last Name Field -->
+                <div>
+                    <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Last Name
+                    </label>
+                    <div class="mt-1">
+                        {{ form.last_name }}
+                    </div>
+                    {% if form.last_name.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Password Fields -->
+                <div>
+                    <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1">
+                        {{ form.password1 }}
+                    </div>
+                    {% if form.password1.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Confirm Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="mt-1">
+                        {{ form.password2 }}
+                    </div>
+                    {% if form.password2.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start mt-6">
+                    <div class="flex items-center h-5">
+                        {{ form.terms_accepted }}
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="{{ form.terms_accepted.id_for_label }}" class="font-medium text-gray-700">
+                            I agree to the
+                            <a href="#" class="text-primary hover:text-primary/80 transition-colors">Terms</a>
+                            and
+                            <a href="#" class="text-primary hover:text-primary/80 transition-colors">Privacy Policy</a>
+                            <span class="text-red-500">*</span>
+                        </label>
+                        {% if form.terms_accepted.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.terms_accepted.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="mt-6">
+                    <button type="submit" class="flex w-full justify-center rounded-xl bg-gradient-to-r from-primary to-blue-500 hover:from-blue-500 hover:to-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                        Create account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr("#{{ form.date_of_birth.id_for_label }}", {
+            dateFormat: "Y-m-d",
+            maxDate: new Date(),
+        });
+    });
+</script>
+{% endblock %}

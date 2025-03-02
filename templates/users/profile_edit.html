@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="py-12">
+    <div class="max-w-2xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold gradient-text mb-4">Edit Profile</h1>
+            <p class="text-gray-300">Update your personal information and preferences.</p>
+        </div>
+
+        <div class="glass-effect rounded-lg p-8">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Current Avatar -->
+                <div class="text-center mb-8">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" 
+                         class="w-32 h-32 rounded-full mx-auto mb-4">
+                    {% else %}
+                    <div class="w-32 h-32 rounded-full bg-accent/20 flex items-center justify-center text-4xl mx-auto mb-4">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Form Fields -->
+                {{ form|crispy }}
+
+                <!-- Submit Button -->
+                <div class="flex justify-end space-x-4">
+                    <a href="{% url 'users:profile' %}" 
+                       class="px-6 py-2 glass-effect hover:bg-accent/20 transition-colors rounded-lg font-bold">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="px-6 py-2 bg-primary hover:bg-secondary transition-colors rounded-lg text-white font-bold">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

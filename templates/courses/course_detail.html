@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-5xl mx-auto">
+        <!-- Course Header -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+            <!-- Course Banner -->
+            <div class="relative h-72">
+                {% if course.thumbnail %}
+                    <img src="{{ course.thumbnail.url }}" 
+                         alt="{{ course.title }}" 
+                         class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-r from-primary/5 to-primary/10 flex items-center justify-center">
+                        <i class="fas fa-book-open text-6xl text-primary/40"></i>
+                    </div>
+                {% endif %}
+                <div class="absolute inset-0 bg-black/40"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 bg-primary/90 rounded-full text-sm font-medium">
+                            {{ course.category.name }}
+                        </span>
+                        <span class="px-3 py-1 bg-black/30 rounded-full text-sm">
+                            {{ total_students }} students
+                        </span>
+                    </div>
+                    <h1 class="text-4xl font-bold mb-2">{{ course.title }}</h1>
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-user-tie"></i>
+                            By {{ course.instructor.username }}
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            {{ avg_rating|floatformat:1|default:"New" }}
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-book"></i>
+                            {{ total_lessons }} lessons
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8">
+                <!-- Course Description -->
+                <div class="prose max-w-none mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">About This Course</h2>
+                    <p class="text-gray-600">{{ course.description }}</p>
+                </div>
+
+                <!-- Instructor Section -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Your Instructor</h2>
+                    <div class="flex items-center gap-4">
+                        <div class="flex-shrink-0">
+                            {% if course.instructor.avatar and course.instructor.avatar.url %}
+                                <img src="{{ course.instructor.avatar.url }}" 
+                                     alt="{{ course.instructor.username }}" 
+                                     class="w-16 h-16 rounded-full border-2 border-primary/20">
+                            {% else %}
+                                <div class="w-16 h-16 rounded-full border-2 border-primary/20 bg-primary/10 flex items-center justify-center">
+                                    <span class="text-primary text-xl font-semibold">
+                                        {{ course.instructor.username|first|upper }}
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">{{ course.instructor.username }}</h3>
+                            <p class="text-gray-600">{{ course.instructor.role|default:"Instructor"|title }}</p>
+                            <div class="flex items-center gap-4 mt-2">
+                                <span class="text-sm text-gray-500">
+                                    <i class="fas fa-graduation-cap mr-1"></i>
+                                    {{ course.instructor.courses_teaching.count }} courses
+                                </span>
+                                <span class="text-sm text-gray-500">
+                                    <i class="fas fa-users mr-1"></i>
+                                    {{ total_students }} students
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enrollment Button -->
+                {% if user.is_authenticated %}
+                    {% if user in course.students.all %}
+                        <button class="block w-full text-center px-6 py-4 rounded-xl bg-green-600 text-white font-medium hover:bg-green-700 transition-colors mb-8">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Already Enrolled
+                        </button>
+                    {% else %}
+                        <button class="w-full px-6 py-4 rounded-xl bg-primary text-white font-medium hover:bg-primary-dark transition-colors mb-8">
+                            <i class="fas fa-graduation-cap mr-2"></i>
+                            Enroll Now
+                        </button>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'account_login' %}" 
+                       class="block w-full text-center px-6 py-4 rounded-xl bg-primary text-white font-medium hover:bg-primary-dark transition-colors mb-8">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Login to Enroll
+                    </a>
+                {% endif %}
+
+                <!-- Course Content -->
+                <div class="bg-gray-50 rounded-xl overflow-hidden">
+                    <div class="px-8 py-6 bg-white border-b border-gray-200">
+                        <h2 class="text-2xl font-bold text-gray-900">Course Content</h2>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        {% for module in modules %}
+                        <div class="p-6 hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    <i class="fas fa-book-reader text-primary mr-2"></i>
+                                    {{ module.title }}
+                                </h3>
+                                {% if user in course.students.all %}
+                                    <button class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary hover:bg-white rounded-lg transition-colors">
+                                        View Module <i class="fas fa-arrow-right ml-2"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
+                            <p class="text-gray-600 mb-3">{{ module.description }}</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="flex items-center mr-4">
+                                    <i class="fas fa-book-open mr-2"></i>
+                                    {{ module.lessons.count }} lessons
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-clock mr-2"></i>
+                                    {{ module.duration|default:"Self-paced" }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

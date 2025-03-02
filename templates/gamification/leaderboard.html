@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen">
+    <!-- Leaderboard Header -->
+    <div class="relative py-20 overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full filter blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-highlight/10 rounded-full filter blur-3xl"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl font-bold gradient-text mb-4">Leaderboard</h1>
+                <p class="text-xl text-gray-300">Compete with other learners and climb the ranks!</p>
+            </div>
+
+            <!-- Top 3 Users -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <!-- Second Place -->
+                {% with leaders|slice:"1:2"|first as second_place %}
+                {% if second_place %}
+                <div class="feature-card p-8 rounded-xl text-center transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="relative inline-block mb-6">
+                        <img src="{{ second_place.user.profile.avatar.url|default:'https://via.placeholder.com/128' }}" 
+                            alt="{{ second_place.user.get_full_name }}"
+                            class="w-24 h-24 rounded-full border-4 border-[#C0C0C0]">
+                        <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+                            <div class="bg-[#C0C0C0] text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
+                                2
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">{{ second_place.user.get_full_name }}</h3>
+                    <p class="text-3xl font-bold text-[#C0C0C0] mb-2">{{ second_place.points }}</p>
+                    <p class="text-gray-400">points</p>
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <!-- First Place -->
+                {% with leaders|slice:":1"|first as first_place %}
+                {% if first_place %}
+                <div class="feature-card p-8 rounded-xl text-center transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="relative inline-block mb-6">
+                        <img src="{{ first_place.user.profile.avatar.url|default:'https://via.placeholder.com/128' }}" 
+                            alt="{{ first_place.user.get_full_name }}"
+                            class="w-32 h-32 rounded-full border-4 border-[#FFD700]">
+                        <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+                            <div class="bg-[#FFD700] text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl">
+                                1
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">{{ first_place.user.get_full_name }}</h3>
+                    <p class="text-4xl font-bold text-[#FFD700] mb-2">{{ first_place.points }}</p>
+                    <p class="text-gray-400">points</p>
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <!-- Third Place -->
+                {% with leaders|slice:"2:3"|first as third_place %}
+                {% if third_place %}
+                <div class="feature-card p-8 rounded-xl text-center transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="relative inline-block mb-6">
+                        <img src="{{ third_place.user.profile.avatar.url|default:'https://via.placeholder.com/128' }}" 
+                            alt="{{ third_place.user.get_full_name }}"
+                            class="w-24 h-24 rounded-full border-4 border-[#CD7F32]">
+                        <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+                            <div class="bg-[#CD7F32] text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
+                                3
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">{{ third_place.user.get_full_name }}</h3>
+                    <p class="text-3xl font-bold text-[#CD7F32] mb-2">{{ third_place.points }}</p>
+                    <p class="text-gray-400">points</p>
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Full Leaderboard -->
+            <div class="feature-card rounded-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-700">
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Rank</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">User</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Level</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Points</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Achievements</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for leader in leaders %}
+                            <tr class="border-b border-gray-700/50 hover:bg-accent/5 transition-colors {% if leader.user == request.user %}bg-accent/10{% endif %}">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        {% if forloop.counter <= 3 %}
+                                        <div class="w-8 h-8 rounded-full flex items-center justify-center mr-2
+                                            {% if forloop.counter == 1 %}bg-[#FFD700] text-white{% endif %}
+                                            {% if forloop.counter == 2 %}bg-[#C0C0C0] text-white{% endif %}
+                                            {% if forloop.counter == 3 %}bg-[#CD7F32] text-white{% endif %}">
+                                            {{ forloop.counter }}
+                                        </div>
+                                        {% else %}
+                                        <span class="text-gray-400">{{ forloop.counter }}</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="{{ leader.user.profile.avatar.url|default:'https://via.placeholder.com/32' }}" 
+                                            alt="{{ leader.user.get_full_name }}"
+                                            class="w-8 h-8 rounded-full">
+                                        <span class="font-medium text-white">{{ leader.user.get_full_name }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        {% if leader.level >= 20 %}bg-accent/20 text-accent
+                                        {% elif leader.level >= 10 %}bg-primary/20 text-primary
+                                        {% else %}bg-gray-700 text-gray-300{% endif %}">
+                                        Level {{ leader.level }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="font-medium text-white">{{ leader.points }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex -space-x-1">
+                                        {% for achievement in leader.user.achievements.all|slice:":3" %}
+                                        <div class="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center"
+                                            title="{{ achievement.badge.name }}">
+                                            <i class="{{ achievement.badge.icon }} text-xs text-accent"></i>
+                                        </div>
+                                        {% endfor %}
+                                        {% if leader.user.achievements.count > 3 %}
+                                        <div class="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center text-xs text-gray-300"
+                                            title="More achievements">
+                                            +{{ leader.user.achievements.count|add:"-3" }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <div class="flex justify-center mt-8 space-x-2">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" 
+                    class="px-4 py-2 bg-dark/30 border border-gray-700 rounded-lg hover:border-accent text-white transition-colors">
+                    Previous
+                </a>
+                {% endif %}
+                
+                <span class="px-4 py-2 bg-accent text-white rounded-lg">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" 
+                    class="px-4 py-2 bg-dark/30 border border-gray-700 rounded-lg hover:border-accent text-white transition-colors">
+                    Next
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

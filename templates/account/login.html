@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <!-- Logo -->
+        <img src="{% static 'images/Logo.png' %}" alt="Eduverse Logo" class="mx-auto h-16 w-auto">
+        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+            Welcome back
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            Or
+            <a href="{% url 'account_signup' %}" class="font-medium text-primary hover:text-primary/80 transition-colors">
+                start your learning journey today
+            </a>
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow-xl shadow-gray-100/10 sm:rounded-2xl sm:px-10 border border-gray-100">
+            <!-- Social Login -->
+            {% get_providers as socialaccount_providers %}
+            {% if socialaccount_providers %}
+            <div class="space-y-3">
+                <button class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 hover:-translate-y-0.5">
+                    <img src="{% static 'images/google.svg' %}" alt="Google" class="h-5 w-5 mr-2">
+                    Continue with Google
+                </button>
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form class="space-y-6 mt-6" method="POST" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+
+                <!-- Error Messages -->
+                {% if form.errors %}
+                <div class="rounded-xl bg-red-50 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                There were errors with your submission
+                            </h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Email Field -->
+                <div>
+                    <label for="id_login" class="block text-sm font-medium text-gray-700">
+                        Email address
+                    </label>
+                    <div class="mt-1">
+                        <input id="id_login" name="login" type="email" autocomplete="email" required
+                               class="block w-full appearance-none rounded-xl border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm">
+                    </div>
+                    {% if form.login.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.login.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="id_password" class="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <div class="mt-1">
+                        <input id="id_password" name="password" type="password" autocomplete="current-password" required
+                               class="block w-full appearance-none rounded-xl border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm">
+                    </div>
+                    {% if form.password.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.password.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="id_remember" name="remember" type="checkbox"
+                               class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary">
+                        <label for="id_remember" class="ml-2 block text-sm text-gray-900">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <div class="text-sm">
+                        <a href="{% url 'account_reset_password' %}" class="font-medium text-primary hover:text-primary/80 transition-colors">
+                            Forgot your password?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" class="flex w-full justify-center rounded-xl bg-gradient-to-r from-primary to-blue-500 hover:from-blue-500 hover:to-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                        Sign in
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

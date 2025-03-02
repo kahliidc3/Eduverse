@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen">
+    <!-- Achievements Header -->
+    <div class="relative py-20 overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full filter blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-highlight/10 rounded-full filter blur-3xl"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl font-bold gradient-text mb-4">Achievements</h1>
+                <p class="text-xl text-gray-300">Track your progress and unlock new achievements!</p>
+            </div>
+
+            <!-- Achievement Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+                <div class="feature-card p-6 rounded-xl text-center">
+                    <div class="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-trophy text-2xl text-accent"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-2">{{ achievements_earned }}</div>
+                    <p class="text-gray-300">Achievements Earned</p>
+                </div>
+
+                <div class="feature-card p-6 rounded-xl text-center">
+                    <div class="w-16 h-16 mx-auto bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-star text-2xl text-accent"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-2">{{ total_points }}</div>
+                    <p class="text-gray-300">Total Points</p>
+                </div>
+
+                <div class="feature-card p-6 rounded-xl text-center">
+                    <div class="w-16 h-16 mx-auto bg-highlight/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-medal text-2xl text-accent"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-2">{{ completion_rate }}%</div>
+                    <p class="text-gray-300">Completion Rate</p>
+                </div>
+
+                <div class="feature-card p-6 rounded-xl text-center">
+                    <div class="w-16 h-16 mx-auto bg-accent/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-award text-2xl text-accent"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-2">{{ rank }}</div>
+                    <p class="text-gray-300">Global Rank</p>
+                </div>
+            </div>
+
+            <!-- Achievement Categories -->
+            <div class="mb-8">
+                <div class="border-b border-gray-700">
+                    <nav class="-mb-px flex space-x-8">
+                        {% for category in categories %}
+                        <button onclick="filterAchievements('{{ category.slug }}')" 
+                            class="achievement-filter px-1 py-4 border-b-2 font-medium text-sm {% if forloop.first %}active-filter{% endif %}" 
+                            data-category="{{ category.slug }}">
+                            {{ category.name }}
+                        </button>
+                        {% endfor %}
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Achievement Grid -->
+            {% for category in categories %}
+            <div id="{{ category.slug }}-achievements" 
+                class="achievement-group {% if not forloop.first %}hidden{% endif %} grid grid-cols-1 md:grid-cols-3 gap-8">
+                {% for achievement in achievements|dictsort:"order" %}
+                {% if achievement.category == category %}
+                <div class="feature-card p-6 rounded-xl {% if achievement in user_achievements %}border-2 border-accent{% endif %}">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 mx-auto {% if achievement in user_achievements %}bg-accent/20{% else %}bg-gray-700/50{% endif %} rounded-full flex items-center justify-center mb-4">
+                            <i class="{{ achievement.icon }} text-3xl {% if achievement in user_achievements %}text-accent{% else %}text-gray-400{% endif %}"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">{{ achievement.name }}</h3>
+                        <p class="text-sm text-gray-300 mb-4">{{ achievement.description }}</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Progress Bar -->
+                        {% if achievement.progress_type %}
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-400 mb-2">
+                                <span>Progress</span>
+                                <span>{{ achievement.current_progress }}/{{ achievement.required_progress }}</span>
+                            </div>
+                            <div class="bg-dark/30 rounded-full h-2">
+                                <div class="bg-accent h-full rounded-full" 
+                                    style="width: {% widthratio achievement.current_progress achievement.required_progress 100 %}%">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Achievement Details -->
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-star text-accent"></i>
+                                <span class="text-gray-300">{{ achievement.points }} points</span>
+                            </div>
+                            {% if achievement in user_achievements %}
+                            <div class="flex items-center space-x-2 text-accent">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Unlocked</span>
+                            </div>
+                            {% else %}
+                            <div class="flex items-center space-x-2 text-gray-400">
+                                <i class="fas fa-lock"></i>
+                                <span>Locked</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function filterAchievements(category) {
+    // Hide all achievement groups
+    document.querySelectorAll('.achievement-group').forEach(group => {
+        group.classList.add('hidden');
+    });
+    
+    // Show selected category
+    document.getElementById(category + '-achievements').classList.remove('hidden');
+    
+    // Update filter buttons
+    document.querySelectorAll('.achievement-filter').forEach(button => {
+        button.classList.remove('border-accent', 'text-accent');
+        button.classList.add('border-transparent', 'text-gray-400', 'hover:text-gray-300', 'hover:border-gray-300');
+    });
+    
+    // Highlight active filter
+    const activeFilter = document.querySelector(`[data-category="${category}"]`);
+    activeFilter.classList.remove('border-transparent', 'text-gray-400', 'hover:text-gray-300', 'hover:border-gray-300');
+    activeFilter.classList.add('border-accent', 'text-accent');
+}
+
+// Initialize first category
+document.addEventListener('DOMContentLoaded', function() {
+    const firstCategory = document.querySelector('.achievement-filter').dataset.category;
+    filterAchievements(firstCategory);
+});
+</script>
+{% endblock %}
+
+{% endblock %}

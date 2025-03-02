@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <!-- Logo -->
+        <img src="{% static 'images/Logo.png' %}" alt="Eduverse Logo" class="mx-auto h-16 w-auto">
+        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+            {% trans "Sign Out" %}
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            {% trans 'Are you sure you want to sign out?' %}
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow-xl shadow-gray-100/10 sm:rounded-2xl sm:px-10 border border-gray-100">
+            <form method="post" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                {% endif %}
+                <div class="flex justify-center space-x-4">
+                    <button type="submit" class="flex justify-center rounded-xl bg-red-600 hover:bg-red-700 px-8 py-2 text-sm font-medium text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                        {% trans 'Sign Out' %}
+                    </button>
+                    <a href="{% url 'core:home' %}" class="flex justify-center rounded-xl bg-gray-100 hover:bg-gray-200 px-8 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                        {% trans 'Cancel' %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

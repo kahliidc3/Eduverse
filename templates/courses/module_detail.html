@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <!-- Module Header -->
+    <div class="relative bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col md:flex-row justify-between gap-8">
+                <!-- Module Info -->
+                <div class="flex-1">
+                    <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+                        <a href="{% url 'courses:course_detail' course.slug %}" class="hover:text-primary transition-colors duration-300">
+                            {{ course.title }}
+                        </a>
+                        <i class="fas fa-chevron-right text-xs"></i>
+                        <span class="text-gray-900">{{ module.title }}</span>
+                    </nav>
+
+                    <h1 class="text-3xl font-bold mb-4">
+                        <span class="bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                            {{ module.title }}
+                        </span>
+                    </h1>
+
+                    <div class="flex items-center gap-6 text-sm text-gray-600">
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-clock text-primary/80"></i>
+                            {{ module.duration }} mins
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-play-circle text-primary/80"></i>
+                            {{ module.lectures.count }} lectures
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Progress -->
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-full border-4 border-primary/20 flex items-center justify-center">
+                        <span class="text-lg font-bold text-primary">{{ course_progress }}%</span>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-900">Your Progress</h4>
+                        <p class="text-sm text-gray-600">{{ completed_lectures }} of {{ total_lectures }} completed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Main Content -->
+            <div class="lg:col-span-2">
+                <!-- Video Player -->
+                <div class="aspect-video rounded-2xl overflow-hidden bg-gray-900 shadow-lg mb-8">
+                    {% if module.video_url %}
+                    <video 
+                        class="w-full h-full"
+                        controls
+                        autoplay
+                        poster="{{ module.thumbnail.url|default:'' }}">
+                        <source src="{{ module.video_url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                        <i class="fas fa-play-circle text-6xl"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Lecture Content -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+                    <div class="p-6 border-b border-gray-100">
+                        <h2 class="text-xl font-bold text-gray-900">{{ module.title }}</h2>
+                        <p class="text-gray-600 mt-2">{{ module.content|safe }}</p>
+                    </div>
+
+                    <!-- Resources -->
+                    {% if module.resources.exists %}
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Resources</h3>
+                        <div class="space-y-3">
+                            {% for resource in module.resources.all %}
+                            <a href="{{ resource.file.url }}" 
+                               class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-primary/20 hover:bg-primary/5 transition-all duration-300">
+                                <i class="fas fa-file-download text-primary"></i>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">{{ resource.title }}</h4>
+                                    <p class="text-sm text-gray-600">{{ resource.file_size }}</p>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between gap-4">
+                    {% if previous_module %}
+                    <a href="{% url 'courses:module_detail' course.id previous_module.id %}" 
+                       class="flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-200 hover:border-primary/20 hover:bg-primary/5 transition-all duration-300">
+                        <i class="fas fa-arrow-left text-primary"></i>
+                        <span>Previous Module</span>
+                    </a>
+                    {% else %}
+                    <div></div>
+                    {% endif %}
+
+                    {% if next_module %}
+                    <a href="{% url 'courses:module_detail' course.id next_module.id %}" 
+                       class="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition-colors duration-300">
+                        <span>Next Module</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Module Outline -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-24">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="p-6 border-b border-gray-100">
+                            <h3 class="text-xl font-bold">Module Content</h3>
+                            <p class="text-gray-600 mt-2">
+                                {{ module.lectures.count }} lectures • {{ module.duration }} total mins
+                            </p>
+                        </div>
+
+                        <div class="divide-y divide-gray-100">
+                            {% for lecture in module.lectures.all %}
+                            <a href="{% url 'courses:lecture_detail' course.id module.id lecture.id %}" 
+                               class="flex items-center gap-4 p-6 hover:bg-gray-50 transition-colors duration-300 {% if lecture == current_lecture %}bg-primary/5{% endif %}">
+                                {% if lecture in completed_lectures_list %}
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <i class="fas fa-check text-primary"></i>
+                                </div>
+                                {% else %}
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <span class="text-gray-600 font-medium">{{ forloop.counter }}</span>
+                                </div>
+                                {% endif %}
+
+                                <div>
+                                    <h4 class="font-medium text-gray-900 {% if lecture == current_lecture %}text-primary{% endif %}">
+                                        {{ lecture.title }}
+                                    </h4>
+                                    <p class="text-sm text-gray-600">{{ lecture.duration }} mins</p>
+                                </div>
+
+                                {% if lecture == current_lecture %}
+                                <div class="ml-auto">
+                                    <i class="fas fa-play text-primary"></i>
+                                </div>
+                                {% endif %}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

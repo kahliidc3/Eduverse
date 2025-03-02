@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Profile Header -->
+        <div class="feature-card rounded-xl p-8 mb-8">
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <!-- Avatar -->
+                <div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="Profile picture" class="w-full h-full object-cover">
+                    {% else %}
+                        <i class="fas fa-user text-4xl text-primary"></i>
+                    {% endif %}
+                </div>
+
+                <!-- User Info -->
+                <div class="flex-grow text-center md:text-left">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ user.get_full_name }}</h1>
+                    <p class="text-gray-600 mb-4">{{ user.email }}</p>
+                    <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                        <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm">
+                            {{ user.role|title }}
+                        </span>
+                        <span class="px-4 py-2 bg-secondary/10 text-secondary rounded-full text-sm">
+                            Member since {{ user.date_joined|date:"F Y" }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Edit Profile Button -->
+                <a href="{% url 'users:edit_profile' %}" 
+                   class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                    Edit Profile
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats and Progress -->
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+            <!-- Courses Progress -->
+            <div class="feature-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">Course Progress</h3>
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                        <i class="fas fa-book text-primary"></i>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    {% for enrollment in user.enrollments.all %}
+                    <div>
+                        <div class="flex justify-between text-sm text-gray-600 mb-1">
+                            <span>{{ enrollment.course.title }}</span>
+                            <span>{{ enrollment.progress }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-primary rounded-full h-2" style="width: {{ enrollment.progress }}%"></div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-600">No courses enrolled yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="feature-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">Achievements</h3>
+                    <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                        <i class="fas fa-trophy text-secondary"></i>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    {% for badge in user.badges.all %}
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto bg-secondary/10 rounded-full flex items-center justify-center mb-2">
+                            <i class="{{ badge.icon }} text-secondary text-xl"></i>
+                        </div>
+                        <span class="text-sm text-gray-600">{{ badge.name }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="col-span-3 text-gray-600">No achievements yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Learning Stats -->
+            <div class="feature-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">Learning Stats</h3>
+                    <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
+                        <i class="fas fa-chart-line text-accent"></i>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Courses Completed</span>
+                        <span class="text-2xl font-semibold text-gray-800">{{ completed_courses_count }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Hours Learned</span>
+                        <span class="text-2xl font-semibold text-gray-800">{{ total_hours_learned }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Current Streak</span>
+                        <span class="text-2xl font-semibold text-gray-800">{{ current_streak }} days</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="feature-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">Recent Activity</h3>
+                <div class="w-12 h-12 bg-highlight/10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-history text-highlight"></i>
+                </div>
+            </div>
+            <div class="space-y-4">
+                {% for activity in recent_activities %}
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="{{ activity.icon }} text-gray-600"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-gray-800">{{ activity.description }}</p>
+                        <p class="text-sm text-gray-600">{{ activity.timestamp|timesince }} ago</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-600">No recent activity.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

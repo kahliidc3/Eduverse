@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="py-12">
+    <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">Learning Progress</h1>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            Track your journey and celebrate your achievements!
+        </p>
+    </div>
+
+    <!-- Overall Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <!-- Total Courses -->
+        <div class="glass-effect rounded-lg p-8 text-center">
+            <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <p class="text-4xl font-bold gradient-text mb-2">{{ total_courses }}</p>
+            <p class="text-gray-400">Enrolled Courses</p>
+        </div>
+        
+        <!-- Completed Courses -->
+        <div class="glass-effect rounded-lg p-8 text-center">
+            <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <p class="text-4xl font-bold gradient-text mb-2">{{ completed_courses }}</p>
+            <p class="text-gray-400">Completed Courses</p>
+        </div>
+        
+        <!-- Total Points -->
+        <div class="glass-effect rounded-lg p-8 text-center">
+            <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fas fa-star"></i>
+            </div>
+            <p class="text-4xl font-bold gradient-text mb-2">{{ total_points }}</p>
+            <p class="text-gray-400">Total Points</p>
+        </div>
+    </div>
+
+    <!-- Course Progress -->
+    <div class="glass-effect rounded-lg p-8">
+        <h2 class="text-2xl font-bold mb-8">Course Progress</h2>
+        
+        <div class="space-y-8">
+            {% for progress in course_progress %}
+            <div class="glass-effect rounded-lg p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <img src="{{ progress.course.thumbnail.url }}" alt="{{ progress.course.title }}" 
+                             class="w-16 h-16 rounded-lg object-cover">
+                        <div>
+                            <h3 class="text-xl font-bold">{{ progress.course.title }}</h3>
+                            <p class="text-sm text-gray-400">
+                                By {{ progress.course.instructor.get_full_name }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-2xl font-bold gradient-text">{{ progress.completion_percentage|floatformat:0 }}%</p>
+                        <p class="text-sm text-gray-400">
+                            {{ progress.completed_lessons }} / {{ progress.total_lessons }} lessons
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="relative pt-1">
+                    <div class="w-full bg-gray-700 bg-opacity-30 rounded-full h-2">
+                        <div 
+                            class="h-full rounded-full bg-accent transition-all duration-500"
+                            style="width: {{ progress.completion_percentage }}%">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Button -->
+                <div class="mt-6 text-right">
+                    <a href="{% url 'courses:course_detail' progress.course.slug %}" 
+                       class="inline-block px-6 py-2 bg-primary hover:bg-secondary transition-colors rounded-lg text-white font-bold">
+                        {% if progress.completion_percentage == 100 %}
+                            Review Course
+                        {% else %}
+                            Continue Learning
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center text-gray-400 py-12">
+                <i class="fas fa-book text-4xl mb-4"></i>
+                <p>You haven't enrolled in any courses yet.</p>
+                <a href="{% url 'courses:course_list' %}" 
+                   class="inline-block px-6 py-3 mt-6 bg-primary hover:bg-secondary transition-colors rounded-lg text-white font-bold">
+                    Browse Courses
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
