@@ -88,7 +88,7 @@ eduverse/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/eduverse.git
+git clone https://github.com/kahliidc3/eduverse.git
 cd eduverse
 ```
 
@@ -139,12 +139,7 @@ python manage.py runserver
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## Contact
 
-For support or inquiries:
-- Email: support@eduverse.com
-- Website: https://eduverse.com
-- Documentation: https://docs.eduverse.com
 
 ## License
 
